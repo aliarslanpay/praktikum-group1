@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#SBATCH -J pingpong_same_socket
+#SBATCH -o job_same_socket.out
+#SBATCH -e job_same_socket.out
+#SBATCH --time=00:10:00
+#SBATCH --account=x
+#SBATCH --partition=test
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=2
+#SBATCH --ear=off
+
+module load slurm_setup
+
+mpiexec -print-rank-map -genv I_MPI_PIN_PROCESSOR_LIST=0,1 ./ping_pong

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#SBATCH -J pingpong_across_sockets
+#SBATCH -o job_across_sockets.out
+#SBATCH -e job_across_sockets.out
+#SBATCH --time=00:10:00
+#SBATCH --account=x
+#SBATCH --partition=test
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=2
+#SBATCH --ear=off
+
+module load slurm_setup
+
+export I_MPI_PIN_PROCESSOR_LIST=0,24
+
+mpiexec -print-rank-map -genv I_MPI_PIN_PROCESSOR_LIST=0,24 ./ping_pong
