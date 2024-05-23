@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Job Name and Files (also --job-name)
+#SBATCH -J reduction
+#
+# Output and error (also --output, --error):
+#SBATCH -o test.out
+#SBATCH -e test.out
+#
+# Wall clock limit:
+#SBATCH --time=00:05:00
+#SBATCH --account=h039v
+#SBATCH --partition=test
+#
+# Load MPI modules
+module load intel
+module load intel-mpi
+#
+# Execute the compiled programs
+mpirun -np 4 ./reduction 15
