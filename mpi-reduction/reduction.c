@@ -29,28 +29,17 @@ int main(int argc, char const *argv[])
         values = (int *) malloc(arraySizePerRank * sizeof(int));
         for (int i = 0; i < arraySizePerRank; i++) {
             values[i] = (arraySizePerRank * myid) + i;
-            // sum += values[i];
-            // Debug print
-            // printf("Node %d inside for loop value assigned: values[%d] = %d\n", myid, i, values[i]);
         }
-        // Debug print
-        // printf("Node %d: Array Size %d, Array Size Per Node %d\n", myid, arraySize, arraySizePerRank);
     }
     else {
         int arraySizeForLastRank = arraySize - (arraySizePerRank * myid);
         values = (int *) malloc(arraySizeForLastRank * sizeof(int));
         for (int i = 0; i < arraySizeForLastRank; i++) {
             values[i] = (arraySizePerRank * myid) + i;
-            // sum += values[i];
-            // Debug print
-            // printf("Node %d inside for loop value assigned: values[%d] = %d\n", myid, i, values[i]);
         }
-        // Debug print
-        // printf("Node %d: Array Size %d, Array Size Per Node %d\n", myid, arraySize, arraySizeForLastRank);
     }
 
     // Summing up the data of the local array
-    
     if (myid != (commSize - 1)) {
         for (int i = 0; i < arraySizePerRank; i++) {
             sum += values[i];
@@ -73,33 +62,32 @@ int main(int argc, char const *argv[])
     int child2 = ((myid + 1) * 2);
     int resultBufferFromChild[2];
 
-    // Debug print
-    // printf("Node %d: Parent %d, ChildNum %d, Child1 %d, Child2 %d, Sum %d\n", myid, parent, numOfChildNodes, child1, child2, sum);
 
     if (isLeaf) {
+        // If it is a leaf node, just pass the sum to its parent node
         MPI_Send(&sum, 1, MPI_INTEGER, parent, 0, MPI_COMM_WORLD);
-        // printf("Node: %d, sum: %d\n", myid, sum);
     }
     else if (!isRoot) {
+        // Get the results from the children and add them to our own sum
         MPI_Recv(&(resultBufferFromChild[0]), 1, MPI_INTEGER, child1, 0, MPI_COMM_WORLD, &status);
         if (numOfChildNodes == 2) MPI_Recv(&(resultBufferFromChild[1]), 1, MPI_INTEGER, child2, 0, MPI_COMM_WORLD, &status);
-        // printf("Node: %d, sum: %d\n", myid, sum);
         for (int i = 0; i < numOfChildNodes; i++) {
             sum += resultBufferFromChild[i];
         }
-        // printf("Node: %d, sum: %d\n", myid, sum);
+        // Send the resulting sum to the parent node
         MPI_Send(&sum, 1, MPI_INTEGER, parent, 0, MPI_COMM_WORLD);
     }
     else {
+        // Root node (0)
+        // Gets the result from its children
         MPI_Recv(&(resultBufferFromChild[0]), 1, MPI_INTEGER, child1, 0, MPI_COMM_WORLD, &status);
         if (numOfChildNodes == 2) MPI_Recv(&(resultBufferFromChild[1]), 1, MPI_INTEGER, child2, 0, MPI_COMM_WORLD, &status);
-        // printf("Node: %d, sum: %d\n", myid, sum);
         for (int i = 0; i < numOfChildNodes; i++) {
             sum += resultBufferFromChild[i];
         }
-        // printf("Node: %d, sum: %d\n", myid, sum);
     }
 
+    // Print the result on the rank 0
     if (myid == 0) printf("%d\n", sum);
 
     return 0;
