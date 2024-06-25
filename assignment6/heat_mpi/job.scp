@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#SBATCH -J heat_mpi
+
+#SBATCH --ear=off
+
+#SBATCH -o job.out.%j
+#SBATCH -e job.out.%j
+
+#SBATCH --time=00:01:00
+#SBATCH --account=X
+#SBATCH --partition=test
+
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=48
+#SBATCH --cpus-per-task=1
+
+mpirun -np 192 ./heat test.dat 16 12
