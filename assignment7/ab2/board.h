@@ -177,9 +177,6 @@ class Board
 
   static int fieldDiffOfDir(int d) { return direction[d]; }
 
-  //TODO
-  Board(const Board& other); // Copy constructor declaration
-
  private:
   void setFieldValues();
 

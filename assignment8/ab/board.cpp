@@ -87,6 +87,28 @@ Board::Board()
   _ev = 0;
 }
 
+Board::Board(const Board& other) {
+    // Copy the board fields
+    for (int i = 0; i < AllFields; ++i) {
+        field[i] = other.field[i];
+    }
+
+    // Copy other relevant members
+    color = other.color;
+    color1Count = other.color1Count;
+    color2Count = other.color2Count;
+    _moveNo = other._moveNo;
+    _msecsToPlay[color1] = other._msecsToPlay[color1];
+    _msecsToPlay[color2] = other._msecsToPlay[color2];
+    storedFirst = other.storedFirst;
+    storedLast = other.storedLast;
+    for (int i = 0; i < MvsStored; ++i) {
+        storedMove[i] = other.storedMove[i];
+    }
+    _verbose = other._verbose;
+    _ev = other._ev;
+    _ss = other._ss; // Assuming the search strategy is stateless and can be shared
+}
 
 void Board::begin(int startColor)
 {

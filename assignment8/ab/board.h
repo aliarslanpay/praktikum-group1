@@ -60,6 +60,9 @@ class Board
   Board();
   ~Board() {}
 
+  // Copy constructor
+  Board(const Board& other);
+
   /* different states of one field */
   enum {
     out = 10, free = 0,

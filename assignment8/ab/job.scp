@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# Job Name and Files (also --job-name)
+#SBATCH -J abalone_minmax
+#
+# Output and error (also --output, --error):
+#SBATCH -o job_%j.out
+#SBATCH -e job_%j.err
+#
+# Wall clock limit:
+#SBATCH --time=02:00:00
+#SBATCH --account=h039v
+#SBATCH --partition=test
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+
+module unload intel-mpi
+# Load any necessary modules
+module load gcc
+module load openmpi
+
+# Specify the single configuration to test
+threads=4
+depth=3
+position=""
+
+export OMP_NUM_THREADS=$threads
+echo "Running with $threads threads, depth $depth, position $position"
+
+./player -v -s 0 -n -1 $depth O &
+./player -v -s 0 -n -1 $depth X &
+./start -v -n $position > output_${threads}_threads_${depth}_depth_${position// /_}.txt
